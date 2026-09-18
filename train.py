@@ -1,3 +1,5 @@
+import os
+
 import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader
@@ -21,11 +23,31 @@ from model import UNet
 
 
 # ============================================================
+# CHECKPOINT DIRECTORY
+# ============================================================
+
+# Create a checkpoints folder next to the model file
+
+MODEL_DIR = os.path.dirname(
+    MODEL_PATH
+)
+
+CHECKPOINT_DIR = os.path.join(
+    MODEL_DIR,
+    "checkpoints"
+)
+
+os.makedirs(
+    CHECKPOINT_DIR,
+    exist_ok=True
+)
+
+
+# ============================================================
 # TRAINING FUNCTION
 # ============================================================
 
 def train_model():
-
 
     print("\n==============================")
 
@@ -113,11 +135,20 @@ def train_model():
 
 
     # --------------------------------------------------------
-    # Training
+    # Training history
     # --------------------------------------------------------
 
     train_losses = []
 
+
+    # Best training loss
+
+    best_loss = float("inf")
+
+
+    # ========================================================
+    # START TRAINING
+    # ========================================================
 
     print(
         "\n=============================="
@@ -132,9 +163,7 @@ def train_model():
     )
 
 
-    for epoch in range(
-        EPOCHS
-    ):
+    for epoch in range(EPOCHS):
 
 
         model.train()
@@ -142,6 +171,10 @@ def train_model():
 
         running_loss = 0.0
 
+
+        # ----------------------------------------------------
+        # Train one epoch
+        # ----------------------------------------------------
 
         for images, masks in train_loader:
 
@@ -190,6 +223,10 @@ def train_model():
             )
 
 
+        # ----------------------------------------------------
+        # Calculate epoch loss
+        # ----------------------------------------------------
+
         epoch_loss = (
             running_loss /
             len(train_loader)
@@ -201,6 +238,10 @@ def train_model():
         )
 
 
+        # ----------------------------------------------------
+        # Print progress
+        # ----------------------------------------------------
+
         print(
             f"Epoch "
             f"[{epoch + 1}/{EPOCHS}] "
@@ -209,15 +250,113 @@ def train_model():
         )
 
 
-    # --------------------------------------------------------
-    # Save model
-    # --------------------------------------------------------
+        # ====================================================
+        # SAVE MODEL AFTER EVERY EPOCH
+        # ====================================================
+
+        epoch_model_path = os.path.join(
+            CHECKPOINT_DIR,
+            f"epoch_{epoch + 1}.pth"
+        )
+
+
+        torch.save(
+            model.state_dict(),
+            epoch_model_path
+        )
+
+
+        print(
+            f"Saved: epoch_{epoch + 1}.pth"
+        )
+
+
+        # ====================================================
+        # SAVE LATEST MODEL
+        # ====================================================
+
+        latest_model_path = os.path.join(
+            CHECKPOINT_DIR,
+            "latest_model.pth"
+        )
+
+
+        torch.save(
+            model.state_dict(),
+            latest_model_path
+        )
+
+
+        # ====================================================
+        # SAVE BEST MODEL
+        # ====================================================
+
+        # Here "best" means lowest TRAINING LOSS.
+        #
+        # We are not using validation loss yet because
+        # this training script currently has no validation
+        # loop.
+
+        if epoch_loss < best_loss:
+
+
+            best_loss = epoch_loss
+
+
+            best_model_path = os.path.join(
+                CHECKPOINT_DIR,
+                "best_model.pth"
+            )
+
+
+            torch.save(
+                model.state_dict(),
+                best_model_path
+            )
+
+
+            print(
+                "New best model saved!"
+            )
+
+
+        # ----------------------------------------------------
+        # Safety message
+        # ----------------------------------------------------
+
+        print(
+            f"Checkpoint saved successfully "
+            f"after epoch {epoch + 1}.\n"
+        )
+
+
+    # ========================================================
+    # SAVE FINAL MODEL
+    # ========================================================
+
+    final_model_path = os.path.join(
+        CHECKPOINT_DIR,
+        "final_model.pth"
+    )
+
+
+    torch.save(
+        model.state_dict(),
+        final_model_path
+    )
+
+
+    # Also save to MODEL_PATH
 
     torch.save(
         model.state_dict(),
         MODEL_PATH
     )
 
+
+    # ========================================================
+    # TRAINING COMPLETE
+    # ========================================================
 
     print(
         "\n=============================="
@@ -233,7 +372,67 @@ def train_model():
 
 
     print(
-        "\nModel saved at:"
+        "\nModels saved in:"
+    )
+
+    print(
+        CHECKPOINT_DIR
+    )
+
+
+    print(
+        "\nAvailable models:"
+    )
+
+
+    print(
+        "  epoch_1.pth"
+    )
+
+
+    if EPOCHS >= 2:
+
+        print(
+            "  epoch_2.pth"
+        )
+
+
+    if EPOCHS >= 3:
+
+        print(
+            "  epoch_3.pth"
+        )
+
+
+    if EPOCHS >= 4:
+
+        print(
+            "  epoch_4.pth"
+        )
+
+
+    if EPOCHS >= 5:
+
+        print(
+            "  epoch_5.pth"
+        )
+
+
+    print(
+        "  latest_model.pth"
+    )
+
+    print(
+        "  best_model.pth"
+    )
+
+    print(
+        "  final_model.pth"
+    )
+
+
+    print(
+        "\nMain model saved at:"
     )
 
     print(
