@@ -99,7 +99,6 @@ allowing the exact regions affected by cracks to be identified.
 
 # 🔄 Project Pipeline
 
-```text
 Input Concrete Image
         ↓
 Image Preprocessing
@@ -111,6 +110,8 @@ Pixel-Level Prediction
 Binary Crack Mask
         ↓
 Crack / Damage Analysis
+
+---
 
 # 📂 Project Structure
 
