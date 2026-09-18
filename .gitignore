@@ -31,3 +31,18 @@ test_img/
 test_lab/
 train_img/
 train_lab/
+
+# Python
+__pycache__/
+*.pyc
+
+# Virtual environment
+.venv/
+
+# Trained models
+*.pth
+*.pt
+
+# Training outputs
+outputs/
+
