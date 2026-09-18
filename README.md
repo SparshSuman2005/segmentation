@@ -111,3 +111,38 @@ Pixel-Level Prediction
 Binary Crack Mask
         ↓
 Crack / Damage Analysis
+
+# 📂 Project Structure
+
+```text
+DeepCrack/
+│
+├── dataset/
+│
+├── preprocessing/
+│
+├── src/
+│   ├── config.py
+│   ├── dataset.py
+│   ├── model.py
+│   ├── train.py
+│   ├── evaluate.py
+│   ├── visualize.py
+│   └── main.py
+│
+├── outputs/
+│   ├── checkpoints/
+│   │   ├── epoch_1.pth
+│   │   ├── epoch_2.pth
+│   │   ├── epoch_3.pth
+│   │   ├── epoch_4.pth
+│   │   ├── epoch_5.pth
+│   │   ├── best_model.pth
+│   │   ├── latest_model.pth
+│   │   └── final_model.pth
+│   │
+│   └── ...
+│
+├── Figure_1.png
+├── README.md
+└── requirements.txt
